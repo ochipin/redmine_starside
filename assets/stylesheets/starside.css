@@ -1,0 +1,182 @@
+/* 数字付きリストのスタイル
+ * ----------------------------------------------------------------------- */
+.step-list {
+  --bullet-size: calc(1.75 * 1rem);
+  --bullet-margin: .375rem;
+  list-style: none;
+  counter-reset: steps-counter 0;
+  padding-inline-start: 0;
+  margin-top: 1rem;
+}
+.step-list > li {
+  counter-increment: steps-counter;
+  line-height: var(--bullet-size);
+  min-height: calc(var(--bullet-size) + var(--bullet-margin));
+  position: relative;
+  padding-inline-start: calc(var(--bullet-size) + 1rem);
+  padding-bottom: 15px;
+}
+.step-list > li > *:last-child {margin-bottom: 0; }
+.step-list > li:last-child { padding-bottom: 0; }
+.step-list > li::before {
+  background-color: #ECEEF2;
+  border-radius: 100px;
+  box-shadow: inset 0 0 0 1px #C0C2C7;
+  color: #070707;
+  content: counter(steps-counter);
+  font-size: .8125rem;
+  font-weight: bold;
+  height: var(--bullet-size);
+  inset-inline-start: 0;
+  line-height: var(--bullet-size);
+  position: absolute;
+  text-align: center;
+  top: 0;
+  width: var(--bullet-size);
+}
+.step-list > li::after {
+  background-color: #ECEEF2;
+  bottom: var(--bullet-margin);
+  content: '';
+  inset-inline-start: calc((var(--bullet-size) - 1px) / 2);
+  top: calc(var(--bullet-size) + var(--bullet-margin));
+  position: absolute;
+  width: 1px;
+}
+.step-list > li + li { margin-top: 0; }
+
+/* 注意事項
+ * ----------------------------------------------------------------------- */
+.remarks {
+  border-radius: .5rem;
+  margin-top: 1rem;
+  padding: 1rem;
+}
+.remarks p {
+  padding: 0;
+  margin: 0;
+  line-height: 1.75
+}
+.remarks p.title>[class^="icon-"]{
+  font-size: 24px;
+}
+.remarks p.title {
+  align-items: center;
+  display: flex;
+  font-size: 1.125rem;
+  font-weight: 600;
+  gap: .5rem;
+  line-height: 1.2;
+  margin-top: 0;
+}
+.remarks p.title > svg {
+  flex-shrink: 0;  /* アイコンが縮まないように */
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.remarks > *:last-child {
+  margin-bottom: 0;
+}
+.remarks > *:last-child pre:last-of-type {
+  margin-bottom: 0;
+}
+.remarks p {
+  color: #070707;
+  margin-top: .5rem;
+}
+.remarks ul {margin-top: 1rem}
+.remarks ul li{line-height: 1.75}
+
+/* 補足事項 */
+.remarks:where(.tip) {
+  background: #EDD1FA;
+  border-inline-start: .25rem solid #BB3DF5;
+}
+.remarks:where(.tip) p.title {color: #660891}
+.remarks:where(.tip) code:not(pre code) {background-color: #6608911F !important}
+.remarks:where(.tip) a {color: #660891}
+/* ノート */
+.remarks:where(.note) {
+  background: #D0D4FD;
+  border-inline-start: .25rem solid #4552F9;
+}
+.remarks:where(.note) p.title {color: #0F1C8A}
+.remarks:where(.note) code:not(pre code) {background-color: #0F1C8A1F}
+.remarks:where(.note) a {color: #0F1C8A}
+/* 警告 */
+.remarks:where(.caution) {
+  background: #FCEAC5;
+  border-inline-start: .25rem solid #F5BB3D;
+}
+.remarks:where(.caution) p.title {color: #73520D}
+.remarks:where(.caution) code:not(pre code) {background-color: #73520D1F}
+.remarks:where(.caution) a {color: #73520D}
+/* 危険 */
+.remarks:where(.danger) {
+  background: #FAD1DF;
+  border-inline-start: .25rem solid #F53D7D;
+}
+.remarks:where(.danger) p.title {color: #8A0F3A}
+.remarks:where(.danger) code:not(pre code) {background-color: #8A0F3A1F}
+.remarks:where(.danger) a {color: #8A0F3A}
+
+/* タブ
+ * ----------------------------------------------------------------------- */
+.tabview { margin-top: 1rem; }
+.tabview .wrapper { overflow-x: auto; }
+.tabview .wrapper .tablist {
+  border-bottom: 2px solid #C0C2C7;
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.tabview .tablist li + li { margin: 0; }
+.tabview .tablist li {
+  cursor: pointer;
+  display: flex;
+  margin-bottom: -2px !important;
+  position: relative;
+}
+.tabview .tablist li a, .tabview .tablist li button {
+  align-items: center;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid #C0C2C7;
+  border-radius: 0;
+  box-shadow: none;
+  box-sizing: border-box;
+  color: #070707;
+  cursor: pointer;
+  display: flex;
+  font-size: 1rem;
+  gap: .5rem;
+  line-height: 1.2;
+  outline-offset: -0.1875rem;
+  overflow-wrap: initial;
+  padding: .275rem 1.25rem;
+  text-decoration: none;
+  user-select: none;
+}
+.tabview .tablist li a[aria-selected=true], .tabview .tablist li button[aria-selected=true] {
+  font-weight: bold;
+  border-color: #3D50F5;
+  pointer-events: none;
+}
+.tabview .tab-panel { padding-top: 1rem; }
+.tabview .tab-panel[hidden] { display: none; }
+
+.tabview .wrapper {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.tabview [role="tab"]:focus,
+.tabview [role="tab"]:focus-visible,
+.tabview [role="tabpanel"]:focus,
+.tabview [role="tabpanel"]:focus-visible {
+  outline: none;
+}
+.tabview .tab-panel > .pre-wrapper:first-child pre:first-of-type {
+  margin-top: 0;
+}
