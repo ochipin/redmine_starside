@@ -73,8 +73,10 @@
   // 処理済みコンテナに付けるフラグ。再処理と無限ループを防ぐ。
   const DONE_FLAG = "data-starside-checkbox";
 
-  const EMPTY_RE = /\[ \]/g;
-  const CHECK_RE = /\[[xX*]\]/g;
+  // [ ] / [x] を置換する。ただし直後が ":" のもの（[x]: のような
+  // 参照リンク定義）は対象外にして、リンク定義を壊さないようにする。
+  const EMPTY_RE = /\[ \](?!:)/g;
+  const CHECK_RE = /\[[xX*]\](?!:)/g;
 
   // --- TextNode 内のプレーンな [ ] / [x] を置換 -----------------------------
   function replaceInTextNodes(root) {
@@ -89,7 +91,7 @@
               return NodeFilter.FILTER_REJECT;
             }
           }
-          return /\[ \]|\[[xX*]\]/.test(node.nodeValue)
+          return /\[ \](?!:)|\[[xX*]\](?!:)/.test(node.nodeValue)
             ? NodeFilter.FILTER_ACCEPT
             : NodeFilter.FILTER_SKIP;
         },
@@ -107,13 +109,32 @@
     });
   }
 
-  // --- Textile に <a> 化された [X] を救済 -----------------------------------
+  // --- Textile に <a> 化された [x] を救済 -----------------------------------
+  // Textile は [x] を「角括弧で囲まれたリンク」と解釈して <a>x</a> を生むこと
+  // がある。これを救済する。ただし誤爆を防ぐため、
+  //   ・リンクテキストが x / X 単体
+  //   ・直前テキストノードが "[" で終わる
+  //   ・直後テキストノードが "]" で始まる
+  // の3条件をすべて満たす「[<a>x</a>]」の形のときだけ置換する。
+  // これにより [X]: のような参照リンク定義や、無関係に "X" という文字の
+  // リンクを巻き込んで本文を壊すことを防ぐ。
   function rescueLinkedChecks(root) {
     root.querySelectorAll("a").forEach((a) => {
       const t = (a.textContent || "").trim();
-      if (t === "X" || t === "x") {
-        a.replaceWith(document.createTextNode(BOX_CHECK));
-      }
+      if (t !== "X" && t !== "x") return;
+
+      const prev = a.previousSibling;
+      const next = a.nextSibling;
+      const prevText = prev && prev.nodeType === 3 ? prev.nodeValue : "";
+      const nextText = next && next.nodeType === 3 ? next.nodeValue : "";
+
+      // 直前が "[" で終わり、直後が "]" で始まる場合のみ救済
+      if (!/\[\s*$/.test(prevText) || !/^\s*\]/.test(nextText)) return;
+
+      // 囲っている "[" と "]" を取り除き、チェック済みマークへ
+      prev.nodeValue = prevText.replace(/\[\s*$/, "");
+      next.nodeValue = nextText.replace(/^\s*\]/, "");
+      a.replaceWith(document.createTextNode(BOX_CHECK));
     });
   }
 
