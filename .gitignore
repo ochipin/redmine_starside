@@ -1,0 +1,53 @@
+# --- OS が生成するファイル ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# --- エディタ / IDE ---
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+.project
+.settings/
+
+# --- Ruby / Rails / Redmine プラグイン ---
+*.gem
+*.rbc
+.bundle/
+vendor/bundle/
+/.config
+/coverage/
+/spec/tmp/
+*.log
+log/
+tmp/
+.byebug_history
+
+# --- 環境変数・秘密情報（誤コミット防止） ---
+.env
+.env.*
+*.pem
+*.key
+secrets.yml
+config/database.yml
+
+# --- Node 関連（開発時に使う場合のみ。配布物の vs/ は対象外） ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# --- その他の一時ファイル ---
+*.bak
+*.tmp
+*.orig

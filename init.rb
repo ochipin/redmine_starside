@@ -4,7 +4,7 @@ Redmine::Plugin.register :redmine_starside do
   name        'Redmine Starside'
   author      'Suguru Ochiai'
   description 'Adds Starlight-style banners, step lists, tabs, checkbox notation, and tech-stack badges to Redmine wikis and issues via wiki macros.'
-  version     '0.1.0'
+  version     '0.2.0'
   requires_redmine version_or_higher: '6.0.0'
 
   # バッジ設定（差分のみ保存。詳細は lib/redmine_starside/badge.rb 参照）
@@ -135,8 +135,19 @@ Redmine::WikiFormatting::Macros.register do
   desc <<~DESC
     技術スタックのバッジ（shields.io 形式）を表示する。
 
-      {{badge(linux)}}            Linux バッジ
-      {{badge(redmine, 6.1+)}}    バージョン付き（6.1+ は 6.1.* に変換）
+      {{badge(linux)}}                  Linux バッジ
+      {{badge(redmine, 6.1+)}}          バージョン付き（6.1+ は 6.1.* に変換）
+      {{badge(redmine, 6.1+, B32024)}}  第3引数で色を上書き（hex / 先頭 # 可）
+
+    バージョンを省略して色だけ指定する場合は 2 番目を空にする:
+      {{badge(redmine, , 4169E1)}}
+
+    未定義のキーでも描画する（ロゴ無し・色はキー名から自動選択）:
+      {{badge(myapp)}}                  自動色のバッジ
+      {{badge(myapp, v1.0, FF00FF)}}    バージョン・色も指定可
+
+    第2引数はエンティティ文字も使える（例: 星 {{badge(rate, ★★★☆☆)}} は
+    数値文字参照 &#x2605; / &#x2606; でも書ける）。
 
     利用可能なキーと色は「管理 > プラグイン > Redmine Starside > 設定」で
     確認・変更できる。
@@ -144,11 +155,21 @@ Redmine::WikiFormatting::Macros.register do
   macro :badge do |_obj, args, _text|
     key     = args[0]
     version = args[1]
+    color   = args[2]
 
     raise 'badge: キーを指定してください（例: {{badge(linux)}}）' if key.blank?
 
-    url = RedmineStarside::Badge.url_for(key, version)
-    raise "badge: 未対応のキーです: #{key.strip}" if url.nil?
+    # 第3引数の色指定。指定があり、かつ hex として不正なときは明示エラー。
+    # （未指定なら定義側の色を使う。url_for 側でも再検査するが、ここで
+    #  早めに弾いて編集者にプレビューで気づかせる。）
+    if color.present? && RedmineStarside::Badge.sanitize_color(color).nil?
+      raise "badge: 色の指定が不正です: #{color.strip}（例: B32024 / #B32024）"
+    end
+
+    # 未定義キーでもバッジを描画する（allow_fallback: true）。その場合:
+    #   ラベル = 入力キー、色 = キー名から決まる安定色、ロゴ無し。
+    url = RedmineStarside::Badge.url_for(key, version, color, allow_fallback: true)
+    raise "badge: バッジを生成できませんでした: #{key.strip}" if url.nil?
 
     alt = RedmineStarside::Badge.alt_for(key, version)
     src = ERB::Util.html_escape(url)

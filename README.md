@@ -157,15 +157,25 @@ Notation inside code blocks (`<pre>` / `<code>`) is left untouched, so `[ ]` wri
 
 ### Badges
 
-Display a tech-stack badge inline. The first argument is a key; an optional second argument is a version.
+Display a tech-stack badge inline. The first argument is a key; an optional second argument is a version, and an optional third argument overrides the color.
 
 ```
 {{badge(linux)}}
 {{badge(redmine)}}
 {{badge(redmine, 6.1+)}}
+{{badge(redmine, 6.1+, B32024)}}
 ```
 
-A trailing `+` on the version is converted to `.*` (`6.1+` becomes `6.1.*`). Keys are case-insensitive, and several aliases are provided (`k8s` → Kubernetes, `golang` → Go, and so on).
+A trailing `+` on the version is converted to `.*` (`6.1+` becomes `6.1.*`). Keys are case-insensitive, and several aliases are provided (`k8s` → Kubernetes, `golang` → Go, and so on). The optional third argument sets the badge color as a hex value (a leading `#` is fine); to set a color without a version, leave the second argument empty (`{{badge(redmine, , B32024)}}`).
+
+A key that isn't built in still renders: the key itself becomes the label, no logo is shown, and a color is picked automatically from the key name (the same key always gets the same color). The third argument can override that color as usual.
+
+The second argument also accepts HTML numeric/hex character references (`&#x2605;` → ★, `&#9733;` → ★). Combined with an undefined key, this lets you build things like a star-rating badge:
+
+```
+{{badge(rate, ★★★☆☆, 4C9A2A)}}
+{{badge(rate, &#x2605;&#x2605;&#x2605;&#x2606;&#x2606;, 4C9A2A)}}
+```
 
 Around 90 keys are built in, covering operating systems and distributions, languages, databases, container / CI / IaC tooling, secrets and observability tools, Google Workspace, and a few generic icons (`settings`, `maintenance`, `bug`, `network`). The full, current list of keys — along with their colors and a live preview — is shown on the settings screen.
 

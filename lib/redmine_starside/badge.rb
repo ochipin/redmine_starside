@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require 'cgi'  # HTML エンティティ復元（CGI.unescapeHTML）用
+require 'erb'  # URL パスセグメント安全化（ERB::Util.url_encode）用
+require 'zlib' # 未定義キーの色選択を安定させる CRC32 用
+
 # =============================================================================
 # RedmineStarside::Badge
 # =============================================================================
@@ -25,6 +29,16 @@ module RedmineStarside
 
     # 16進カラー（3/4/6/8桁）の妥当性
     HEX_RE = /\A[0-9A-Fa-f]{3,4}\z|\A[0-9A-Fa-f]{6}\z|\A[0-9A-Fa-f]{8}\z/
+
+    # 未定義キー用のフォールバック色パレット。
+    # 白背景で視認性が高く、白文字も読める中濃度の色を、既存ブランドカラー
+    # （赤・ピンク・紫・藍・青・シアン・緑・黄／オリーブ・橙・灰・茶）に
+    # 寄せて選定。fallback_color がキー名から決定的にこの中から 1 色を選ぶ。
+    FALLBACK_COLORS = %w[
+      C62828 AD1457 6A1B9A 4527A0 283593
+      1565C0 0277BD 00838F 00695C 2E7D32
+      558B2F 9E7D0A EF6C00 546E7A 5D4037
+    ].freeze
 
     # この会話で決めてきたアイコンのカラーリング（デフォルト・コードが正）
     DEFINITIONS = {
@@ -189,6 +203,15 @@ module RedmineStarside
       key.to_s.strip.downcase
     end
 
+    # 未定義キー用の色を「キー名から決定的に」選ぶ。
+    # 同じキーなら常に同じ色（ページ再読込や shields キャッシュで色が揺れない）、
+    # 異なるキーなら散らばって見える。Ruby の String#hash はプロセス毎に
+    # 変わってしまうため、安定する CRC32 を使う。
+    def fallback_color(key)
+      idx = Zlib.crc32(normalize_key(key)) % FALLBACK_COLORS.size
+      FALLBACK_COLORS[idx]
+    end
+
     # 色文字列の正規化。先頭 '#' を許容して除去。妥当な hex のみ返し、
     # 不正なら nil。
     def sanitize_color(value)
@@ -296,9 +319,18 @@ module RedmineStarside
       v.sub(/\+\z/, '.*')
     end
 
+    # HTML エンティティを実文字へ復元する（&#x2605; -> ★, &amp; -> & など）。
+    def decode_entities(text)
+      CGI.unescapeHTML(text.to_s)
+    end
+
     # shields.io メッセージ部のエスケープ ("_"->"__", "-"->"--", " "->"_")
     def shields_escape(text)
       text.to_s.gsub('_', '__').gsub('-', '--').gsub(' ', '_')
+    end
+
+    def encode_segment(text)
+      ERB::Util.url_encode(shields_escape(decode_entities(text)))
     end
 
     # logo 値を shields.io の logo= に渡せる形へ解決する。
@@ -316,20 +348,30 @@ module RedmineStarside
       end
     end
 
-    # key, version から <img> 用 URL を生成。未定義キーは nil。
-    def url_for(key, version_raw = nil)
+    # key, version, color から <img> 用 URL を生成
+    def url_for(key, version_raw = nil, color_override = nil, allow_fallback: false)
       d = effective_definitions[normalize_key(key)]
-      return nil unless d
+      if d.nil?
+        return nil unless allow_fallback
+        label_text = key.to_s.strip
+        return nil if label_text.empty?
+        d = { label: label_text, color: fallback_color(key), logo: nil, logo_color: 'white' }
+      end
 
-      label   = shields_escape(d[:label])
-      ver     = normalize_version(version_raw)
-      message = ver ? "#{label}-#{shields_escape(ver)}-#{d[:color]}" : "#{label}-#{d[:color]}"
+      color      = sanitize_color(color_override) || d[:color]
+      label      = encode_segment(d[:label])
+      ver        = normalize_version(version_raw)
+      message    = "#{label}-#{color}"
+      logo_color = "#{d[:logo_color] || 'white'}"
+      if ver
+        message    = "#{label}-#{encode_segment(ver)}-#{color}"
+        logo_color = 'white'
+      end
 
       path  = "#{base_url}/badge/#{message}"
       logo  = resolve_logo(d[:logo])
       return path if logo.nil?
-
-      "#{path}?logo=#{logo}&logoColor=#{d[:logo_color] || 'white'}"
+      "#{path}?logo=#{logo}&logoColor=#{logo_color}"
     end
 
     # alt 文字列（バージョン併記）
