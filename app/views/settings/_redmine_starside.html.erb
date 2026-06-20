@@ -1,0 +1,152 @@
+<%#
+  redmine_starside バッジ設定画面
+  --------------------------------------------------------------------------
+  @settings モデルは存在せず settings Hash のみ存在するため、Rails の
+  form helper は使わず素の input で組む（name="settings[...]" で送る）。
+
+  保存される構造（差分のみ）:
+    settings[badge_base_url]            : 文字列
+    settings[overrides][<key>]          : 既存キーの色上書き（hex）
+    settings[custom][<key>][label|color|logo|logo_color] : 新規バッジ
+%>
+
+<% base_url   = @settings['badge_base_url'].to_s
+   overrides  = @settings['overrides'].is_a?(Hash) ? @settings['overrides'] : {}
+   custom     = @settings['custom'].is_a?(Hash)    ? @settings['custom']    : {}
+   defaults   = RedmineStarside::Badge::DEFINITIONS
+   img_base   = RedmineStarside::Badge.base_url
+%>
+
+<style>
+  .starside-settings fieldset { margin-bottom: 1.5em; padding: 0.8em 1em; }
+  .starside-settings legend { font-weight: bold; }
+  .starside-settings table.badges { border-collapse: collapse; width: 100%; }
+  .starside-settings table.badges th,
+  .starside-settings table.badges td { padding: 4px 8px; border-bottom: 1px solid #eee; text-align: left; vertical-align: middle; }
+  .starside-settings .swatch { display: inline-block; width: 16px; height: 16px; border: 1px solid #ccc; vertical-align: middle; margin-right: 4px; border-radius: 2px; }
+  .starside-settings .preview-img { height: 20px; vertical-align: middle; }
+  .starside-settings input[type=text] { padding: 2px 4px; }
+  .starside-settings .hint { color: #888; font-size: 0.9em; }
+  .starside-settings .custom-row td { background: #fafafa; }
+</style>
+
+<div class="starside-settings">
+
+  <%# ---- ベース URL ---- %>
+  <fieldset class="box">
+    <legend><%= l(:label_starside_badge_base_url, default: 'Badge base URL') %></legend>
+    <p>
+      <input type="text" name="settings[badge_base_url]"
+             value="<%= h(base_url) %>" size="50"
+             placeholder="https://img.shields.io" />
+    </p>
+    <p class="hint">
+      <%= l(:text_starside_badge_base_url_hint,
+            default: '絶対URL（例: https://localhost/shields）またはルート相対パス（例: /shields）。空欄で https://img.shields.io。リバースプロキシ配下では相対パス推奨。') %>
+    </p>
+  </fieldset>
+
+  <%# ---- 既定バッジの色変更 ---- %>
+  <fieldset class="box">
+    <legend><%= l(:label_starside_badge_defaults, default: 'Default badges (color override)') %></legend>
+    <p class="hint">
+      <%= l(:text_starside_badge_override_hint,
+            default: '色を変更したものだけが保存されます。空欄に戻すと既定色に復帰します。') %>
+    </p>
+    <table class="badges">
+      <thead>
+        <tr>
+          <th><%= l(:field_starside_key, default: 'Key') %></th>
+          <th><%= l(:field_starside_label, default: 'Label') %></th>
+          <th><%= l(:field_starside_color, default: 'Color (hex)') %></th>
+          <th><%= l(:field_starside_preview, default: 'Preview') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% defaults.keys.sort.each do |key| %>
+          <% d = defaults[key]
+             current = overrides[key].to_s
+             current = '' if current.empty?
+          %>
+          <tr>
+            <td><code><%= h(key) %></code></td>
+            <td><%= h(d[:label]) %></td>
+            <td>
+              <span class="swatch" style="background:#<%= h(current.empty? ? d[:color] : current) %>"></span>
+              <input type="text" name="settings[overrides][<%= h(key) %>]"
+                     value="<%= h(current) %>"
+                     placeholder="<%= h(d[:color]) %>" size="8"
+                     pattern="#?[0-9A-Fa-f]{3,8}" />
+            </td>
+            <td>
+              <img class="preview-img"
+                   src="<%= h(RedmineStarside::Badge.url_for(key)) %>"
+                   alt="<%= h(d[:label]) %>" loading="lazy" />
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </fieldset>
+
+  <%# ---- カスタムバッジ（新規追加） ---- %>
+  <fieldset class="box">
+    <legend><%= l(:label_starside_badge_custom, default: 'Custom badges') %></legend>
+    <p class="hint">
+      <%= l(:text_starside_badge_custom_hint,
+            default: 'Simple Icons に無いツールを追加できます。logo 列は Simple Icons の slug（空欄でロゴなし）。key を空にすると削除されます。') %>
+    </p>
+    <table class="badges" id="starside-custom-table">
+      <thead>
+        <tr>
+          <th><%= l(:field_starside_key, default: 'Key') %></th>
+          <th><%= l(:field_starside_label, default: 'Label') %></th>
+          <th><%= l(:field_starside_color, default: 'Color (hex)') %></th>
+          <th>logo (slug)</th>
+          <th>logoColor</th>
+          <th><%= l(:field_starside_preview, default: 'Preview') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <%# 既存のカスタム行 + 空行を数行 %>
+        <% rows = custom.to_a
+           # 入力用に常に3つの空行を足す
+           3.times { rows << ['', {}] }
+           rows.each_with_index do |(ckey, cval), idx|
+             cval = {} unless cval.is_a?(Hash)
+        %>
+          <tr class="custom-row">
+            <td><input type="text" name="settings[custom][<%= idx %>][key]"
+                       value="<%= h(ckey) %>" size="12" /></td>
+            <td><input type="text" name="settings[custom][<%= idx %>][label]"
+                       value="<%= h(cval['label']) %>" size="14" /></td>
+            <td><input type="text" name="settings[custom][<%= idx %>][color]"
+                       value="<%= h(cval['color']) %>" size="8"
+                       placeholder="38A4DD" pattern="#?[0-9A-Fa-f]{3,8}" /></td>
+            <td><input type="text" name="settings[custom][<%= idx %>][logo]"
+                       value="<%= h(cval['logo']) %>" size="12" /></td>
+            <td>
+              <select name="settings[custom][<%= idx %>][logo_color]">
+                <% %w[white black].each do |lc| %>
+                  <option value="<%= lc %>" <%= 'selected' if cval['logo_color'].to_s == lc %>><%= lc %></option>
+                <% end %>
+              </select>
+            </td>
+            <td>
+              <% if ckey.to_s.strip != '' && RedmineStarside::Badge.url_for(ckey) %>
+                <img class="preview-img"
+                     src="<%= h(RedmineStarside::Badge.url_for(ckey)) %>"
+                     alt="<%= h(ckey) %>" loading="lazy" />
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <p class="hint">
+      <%= l(:text_starside_badge_custom_save_hint,
+            default: '保存後、プレビューが更新されます。さらに追加したい場合は保存後に再度この画面を開いてください。') %>
+    </p>
+  </fieldset>
+
+</div>

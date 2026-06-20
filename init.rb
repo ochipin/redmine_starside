@@ -1,9 +1,21 @@
+require File.expand_path('lib/redmine_starside/badge', __dir__)
+
 Redmine::Plugin.register :redmine_starside do
   name        'Redmine Starside'
   author      'Suguru Ochiai'
-  description 'Adds Starlight-style banners, step lists, tabs, and checkbox notation to Redmine wikis and issues via wiki macros.'
-  version     '0.0.1'
+  description 'Adds Starlight-style banners, step lists, tabs, checkbox notation, and tech-stack badges to Redmine wikis and issues via wiki macros.'
+  version     '0.1.0'
   requires_redmine version_or_higher: '6.0.0'
+
+  # バッジ設定（差分のみ保存。詳細は lib/redmine_starside/badge.rb 参照）
+  settings(
+    default: {
+      'badge_base_url' => '',
+      'overrides'      => {},
+      'custom'         => {}
+    },
+    partial: 'settings/redmine_starside'
+  )
 end
 
 module RedmineStarside
@@ -118,5 +130,56 @@ Redmine::WikiFormatting::Macros.register do
         #{panels}
       </div>
     HTML
+  end
+
+  desc <<~DESC
+    技術スタックのバッジ（shields.io 形式）を表示する。
+
+      {{badge(linux)}}            Linux バッジ
+      {{badge(redmine, 6.1+)}}    バージョン付き（6.1+ は 6.1.* に変換）
+
+    利用可能なキーと色は「管理 > プラグイン > Redmine Starside > 設定」で
+    確認・変更できる。
+  DESC
+  macro :badge do |_obj, args, _text|
+    key     = args[0]
+    version = args[1]
+
+    raise 'badge: キーを指定してください（例: {{badge(linux)}}）' if key.blank?
+
+    url = RedmineStarside::Badge.url_for(key, version)
+    raise "badge: 未対応のキーです: #{key.strip}" if url.nil?
+
+    alt = RedmineStarside::Badge.alt_for(key, version)
+    src = ERB::Util.html_escape(url)
+    alt = ERB::Util.html_escape(alt)
+
+    <<~HTML.html_safe
+      <img src="#{src}" alt="#{alt}" class="starside-badge" height="20" style="vertical-align:middle;" />
+    HTML
+  end
+end
+
+# =============================================================================
+# バッジ補完 API（redmine_monaco_editor 連携用）
+# -----------------------------------------------------------------------------
+# {{badge(...)}} のキー候補を JSON で返す。init.rb 集約方針に合わせ、ルートと
+# コントローラをここで完結させる。
+#
+#   GET /starside/badges.json?q=d&limit=50
+# =============================================================================
+RedmineApp::Application.routes.append do
+  get 'starside/badges', to: 'starside_badges#index', as: 'starside_badges'
+end
+
+unless defined?(StarsideBadgesController)
+  class StarsideBadgesController < ApplicationController
+    skip_before_action :verify_authenticity_token, raise: false
+    before_action :require_login
+
+    def index
+      items = RedmineStarside::Badge.search(params[:q].to_s, (params[:limit].presence&.to_i || 50))
+      render json: { items: items, count: items.size }
+    end
   end
 end

@@ -1,0 +1,13 @@
+# config/locales/en.yml （既存ファイルへマージ）
+en:
+  label_starside_badge_base_url: "Badge base URL"
+  label_starside_badge_defaults: "Default badges (color override)"
+  label_starside_badge_custom: "Custom badges"
+  field_starside_key: "Key"
+  field_starside_label: "Label"
+  field_starside_color: "Color (hex)"
+  field_starside_preview: "Preview"
+  text_starside_badge_base_url_hint: "Absolute URL (e.g. https://localhost/shields) or root-relative path (e.g. /shields). Leave empty for https://img.shields.io. A root-relative path is recommended behind a reverse proxy."
+  text_starside_badge_override_hint: "Only changed colors are saved. Clear a field to restore its default color."
+  text_starside_badge_custom_hint: "Add tools that are not in Simple Icons. The logo column is a Simple Icons slug (leave empty for no logo). Clearing the key removes the row."
+  text_starside_badge_custom_save_hint: "Previews refresh after saving. To add more rows, save and reopen this page."

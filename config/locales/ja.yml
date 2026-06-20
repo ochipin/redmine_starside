@@ -1,0 +1,13 @@
+# config/locales/ja.yml （既存ファイルへマージ）
+ja:
+  label_starside_badge_base_url: "バッジのベース URL"
+  label_starside_badge_defaults: "既定バッジ（色の上書き）"
+  label_starside_badge_custom: "カスタムバッジ"
+  field_starside_key: "キー"
+  field_starside_label: "ラベル"
+  field_starside_color: "色（16進）"
+  field_starside_preview: "プレビュー"
+  text_starside_badge_base_url_hint: "絶対URL（例: https://localhost/shields）またはルート相対パス（例: /shields）。空欄で https://img.shields.io。リバースプロキシ配下では相対パス推奨。"
+  text_starside_badge_override_hint: "色を変更したものだけが保存されます。空欄に戻すと既定色に復帰します。"
+  text_starside_badge_custom_hint: "Simple Icons に無いツールを追加できます。logo 列は Simple Icons の slug（空欄でロゴなし）。キーを空にすると行が削除されます。"
+  text_starside_badge_custom_save_hint: "保存後にプレビューが更新されます。さらに行を追加したい場合は保存後に再度この画面を開いてください。"
