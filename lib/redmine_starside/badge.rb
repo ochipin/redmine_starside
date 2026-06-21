@@ -48,10 +48,17 @@ module RedmineStarside
       'debian'     => { label: 'Debian',            color: 'A81D33', logo: 'debian' },
       'redhat'     => { label: 'Red Hat',           color: 'EE0000', logo: 'redhat' },
       'rocky'      => { label: 'Rocky Linux',       color: '10B981', logo: 'rockylinux' },
-      'rockylinux' => { label: 'Rocky Linux',       color: '10B981', logo: 'rockylinux' },
       'alma'       => { label: 'AlmaLinux',         color: '000000', logo: 'almalinux' },
-      'almalinux'  => { label: 'AlmaLinux',         color: '000000', logo: 'almalinux' },
       'alpine'     => { label: 'Alpine Linux',      color: '0D597F', logo: 'alpinelinux' },
+      'mint'       => { label: 'Linux Mint',        color: '87CF3E', logo: 'linuxmint' },
+      'fedora'     => { label: 'Fedora',            color: '51A2DA', logo: 'fedora' },
+      'opensuse'   => { label: 'openSUSE',          color: '73BA25', logo: 'opensuse' },
+      'suse'       => { label: 'SUSE',              color: '0C322C', logo: 'suse' },
+      'zorin'      => { label: 'Zorin OS',          color: '15A6F0', logo: 'zorin' },
+      'freebsd'    => { label: 'FreeBSD',           color: 'AB2B28', logo: 'freebsd' },
+      'bsd'        => { label: 'FreeBSD',           color: 'AB2B28', logo: 'freebsd' },
+      'apple'      => { label: 'Apple',             color: '000000', logo: 'apple' },
+      'macos'      => { label: 'macOS',             color: '000000', logo: 'apple' },
       # Container / Orchestration
       'docker'     => { label: 'Docker',            color: '2496ED', logo: 'docker' },
       'kubernetes' => { label: 'Kubernetes',        color: '326CE5', logo: 'kubernetes' },
@@ -62,35 +69,31 @@ module RedmineStarside
       # Browser
       'firefox'    => { label: 'Firefox',           color: 'FF7139', logo: 'firefoxbrowser' },
       'chrome'     => { label: 'Chrome',            color: '4285F4', logo: 'googlechrome' },
-      'ie'         => { label: 'Internet Explorer', color: '0076D6', logo: 'internetexplorer' },
       # Language
       'c'          => { label: 'C',                 color: 'A8B9CC', logo: 'c',          logo_color: 'black' },
       'cpp'        => { label: 'C++',               color: '00599C', logo: 'cplusplus' },
-      'cplusplus'  => { label: 'C++',               color: '00599C', logo: 'cplusplus' },
       'fortran'    => { label: 'Fortran',           color: '734F96', logo: 'fortran' },
       'java'       => { label: 'Java',              color: '007396', logo: 'openjdk' },
       'openjdk'    => { label: 'Java',              color: '007396', logo: 'openjdk' },
       'go'         => { label: 'Go',                color: '00ADD8', logo: 'go' },
-      'golang'     => { label: 'Go',                color: '00ADD8', logo: 'go' },
       'rust'       => { label: 'Rust',              color: '000000', logo: 'rust' },
       'perl'       => { label: 'Perl',              color: '39457E', logo: 'perl' },
       'ruby'       => { label: 'Ruby',              color: 'CC342D', logo: 'ruby' },
       'python'     => { label: 'Python',            color: '3776AB', logo: 'python' },
       'clojure'    => { label: 'Clojure',           color: '5881D8', logo: 'clojure' },
-      'javascript' => { label: 'JavaScript',        color: 'F7DF1E', logo: 'javascript', logo_color: 'black' },
       'js'         => { label: 'JavaScript',        color: 'F7DF1E', logo: 'javascript', logo_color: 'black' },
       'html'       => { label: 'HTML5',             color: 'E34F26', logo: 'html5' },
-      'html5'      => { label: 'HTML5',             color: 'E34F26', logo: 'html5' },
-      'css'        => { label: 'CSS3',              color: '1572B6', logo: 'css3' },
-      'css3'       => { label: 'CSS3',              color: '1572B6', logo: 'css3' },
+      'css'        => { label: 'CSS3',              color: '1572B6', logo: 'css' },
       'bash'       => { label: 'Bash',              color: '4EAA25', logo: 'gnubash' },
       'shell'      => { label: 'Bash',              color: '4EAA25', logo: 'gnubash' },
+      'php'        => { label: 'PHP',               color: '777BB4', logo: 'php' },
+      'ts'         => { label: 'TypeScript',        color: '3178C6', logo: 'typescript' },
       # DB
-      'postgresql' => { label: 'PostgreSQL',        color: '4169E1', logo: 'postgresql' },
       'postgres'   => { label: 'PostgreSQL',        color: '4169E1', logo: 'postgresql' },
       'mariadb'    => { label: 'MariaDB',           color: '003545', logo: 'mariadb' },
       'mysql'      => { label: 'MySQL',             color: '4479A1', logo: 'mysql' },
       'sqlite'     => { label: 'SQLite',            color: '003B57', logo: 'sqlite' },
+      'dbeaver'    => { label: 'DBeaver',           color: 'D6CDC8', logo: 'dbeaver', logo_color: '372A24' },
       # CMS / Docs / Tools
       'redmine'    => { label: 'Redmine',           color: 'B32024', logo: 'redmine' },
       'rundeck'    => { label: 'Rundeck',           color: 'F73F39', logo: 'rundeck' },
@@ -98,23 +101,53 @@ module RedmineStarside
       'drupal'     => { label: 'Drupal',            color: '0678BE', logo: 'drupal' },
       'wordpress'  => { label: 'WordPress',         color: '21759B', logo: 'wordpress' },
       'hugo'       => { label: 'Hugo',              color: 'FF4088', logo: 'hugo' },
+      'jekyll'     => { label: 'Jekyll',            color: 'CC0000', logo: 'jekyll' },
+      'astro'      => { label: 'Astro',             color: 'BC52EE', logo: 'astro' },
+      'sphinx'     => { label: 'Sphinx',            color: '000000', logo: 'sphinx' },
+      'pandoc'     => { label: 'Pandoc',            color: '4093DA', logo: 'pandoc' },
 
-      # --- Language (追加) ---
-      'php'        => { label: 'PHP',               color: '777BB4', logo: 'php' },
-      'typescript' => { label: 'TypeScript',        color: '3178C6', logo: 'typescript' },
-      'ts'         => { label: 'TypeScript',        color: '3178C6', logo: 'typescript' },
-
-      # --- OS / Distribution (追加) ---
-      'mint'       => { label: 'Linux Mint',        color: '87CF3E', logo: 'linuxmint' },
-      'linuxmint'  => { label: 'Linux Mint',        color: '87CF3E', logo: 'linuxmint' },
-      'fedora'     => { label: 'Fedora',            color: '51A2DA', logo: 'fedora' },
-      'opensuse'   => { label: 'openSUSE',          color: '73BA25', logo: 'opensuse' },
-      'suse'       => { label: 'SUSE',              color: '0C322C', logo: 'suse' },
-      'zorin'      => { label: 'Zorin OS',          color: '15A6F0', logo: 'zorin' },
-      'freebsd'    => { label: 'FreeBSD',           color: 'AB2B28', logo: 'freebsd' },
-      'bsd'        => { label: 'FreeBSD',           color: 'AB2B28', logo: 'freebsd' },
-      'apple'      => { label: 'Apple',             color: '000000', logo: 'apple' },
-      'macos'      => { label: 'macOS',             color: '000000', logo: 'apple' },
+      # --- Framework / Runtime ---
+      # JS
+      'electron'   => { label: 'Electron',          color: '47848F', logo: 'electron' },
+      'wails'      => { label: 'Wails',             color: 'DF0000', logo: 'wails' },
+      'tauri'      => { label: 'Tauri',             color: '24C8D8', logo: 'tauri',   logo_color: 'black' },
+      'react'      => { label: 'React',             color: '61DAFB', logo: 'react',   logo_color: 'black' },
+      'vue'        => { label: 'Vue',               color: '4FC08D', logo: 'vuejs',   logo_color: 'black' },
+      'angular'    => { label: 'Angular',           color: '0F0F11', logo: 'angular' },
+      'svelte'     => { label: 'Svelte',            color: 'FF3E00', logo: 'svelte' },
+      'next'       => { label: 'Next',              color: '000000', logo: 'nextjs' },
+      'nuxt'       => { label: 'Nuxt',              color: '00DC82', logo: 'nuxt', logo_color: 'black' },
+      'remix'      => { label: 'Remix',             color: '000000', logo: 'remix' },
+      'vite'       => { label: 'Vite',              color: '9135FF', logo: 'vite' },
+      'jquery'     => { label: 'jQuery',            color: '0769AD', logo: 'jquery' },
+      'node'       => { label: 'Node',              color: '5FA04E', logo: 'nodedotjs' },
+      'deno'       => { label: 'Deno',              color: '000000', logo: 'deno' },
+      'bun'        => { label: 'Bun',               color: '000000', logo: 'bun' },
+      # モバイル向け
+      'flutter'    => { label: 'Flutter',           color: '02569B', logo: 'flutter' },
+      'ionic'      => { label: 'Ionic',             color: '3880FF', logo: 'ionic' },
+      # CSS
+      'tailwind'   => { label: 'Tailwind CSS',      color: '06B6D4', logo: 'tailwindcss' },
+      'bootstrap'  => { label: 'Bootstrap',         color: '7952B3', logo: 'bootstrap' },
+      # Python
+      'django'     => { label: 'Django',            color: '092E20', logo: 'django' },
+      'flask'      => { label: 'Flask',             color: '3BABC3', logo: 'flask' },
+      'fastapi'    => { label: 'FastAPI',           color: '009688', logo: 'fastapi' },
+      # PHP
+      'laravel'    => { label: 'Laravel',           color: 'FF2D20', logo: 'laravel' },
+      'cakephp'    => { label: 'CakePHP',           color: 'D33C43', logo: 'cakephp' },
+      'symfony'    => { label: 'Symfony',           color: '000000', logo: 'symfony' },
+      'codeigniter'=> { label: 'CodeIgniter',       color: 'EF4223', logo: 'codeigniter' },
+      # Java
+      'springboot' => { label: 'Spring Boot',       color: '6DB33F', logo: 'springboot' },
+      # Ruby
+      'rails'      => { label: 'Rails',             color: 'D30001', logo: 'rubyonrails' },
+      # Go
+      'gin'        => { label: 'Gin',               color: '008ECF', logo: 'gin' },
+      # その他
+      'latex'      => { label: 'LaTeX',             color: '008080', logo: 'latex' },
+      'yaml'       => { label: 'YAML',              color: 'CB171E', logo: 'yaml' },
+      'markdown'   => { label: 'Markdown',          color: '000000', logo: 'markdown' },
 
       # --- Virtualization / Storage (追加) ---
       'proxmox'    => { label: 'Proxmox',           color: 'E57000', logo: 'proxmox' },
@@ -124,6 +157,8 @@ module RedmineStarside
       'git'        => { label: 'Git',               color: 'F05032', logo: 'git' },
       'github'     => { label: 'GitHub',            color: '181717', logo: 'github' },
       'gitlab'     => { label: 'GitLab',            color: 'FC6D26', logo: 'gitlab' },
+      'gitea'      => { label: 'Gitea',             color: '73A952', logo: 'gitea' },
+      'forgejo'    => { label: 'Forgejo',           color: 'CA3500', logo: 'forgejo' },
       'ansible'    => { label: 'Ansible',           color: 'EE0000', logo: 'ansible' },
       'terraform'  => { label: 'Terraform',         color: '844FBA', logo: 'terraform' },
 
@@ -135,6 +170,7 @@ module RedmineStarside
       'grafana'    => { label: 'Grafana',           color: 'F46800', logo: 'grafana' },
       'elasticsearch' => { label: 'Elasticsearch',  color: '005571', logo: 'elasticsearch' },
       'superset'   => { label: 'Apache Superset',   color: '20A7C9', logo: 'apachesuperset' },
+      'supabase'   => { label: 'Supabase',          color: '3FCF8E', logo: 'supabase' },
 
       # --- Build / Package / AI tools (追加) ---
       'npm'        => { label: 'npm',               color: 'CB3837', logo: 'npm' },
@@ -150,12 +186,9 @@ module RedmineStarside
       'drive'       => { label: 'Google Drive',     color: '4285F4', logo: 'googledrive' },
 
       # --- MS 製品名エイリアス（実体は Google Workspace に委譲） ---
-      # 商標回避のため、ロゴ・ラベルとも Google 側を表示する。
-      'word'        => { label: 'Google Docs',      color: '4285F4', logo: 'googledocs' },
-      'spreadsheet' => { label: 'Google Sheets',    color: '34A853', logo: 'googlesheets' },
-      'excel'       => { label: 'Google Sheets',    color: '34A853', logo: 'googlesheets' },
-      'powerpoint'  => { label: 'Google Slides',    color: 'FBBC04', logo: 'googleslides', logo_color: 'black' },
-      'ppt'         => { label: 'Google Slides',    color: 'FBBC04', logo: 'googleslides', logo_color: 'black' },
+      'word'        => { label: 'Word',             color: '4285F4', logo: 'googledocs' },
+      'excel'       => { label: 'Excel',            color: '34A853', logo: 'googlesheets' },
+      'powerpoint'  => { label: 'PowerPoint',       color: 'FBBC04', logo: 'googleslides', logo_color: 'black' },
 
       # --- Generic icons (埋め込み SVG。logo は EMBEDDED_LOGOS のマーカー) ---
       # アイコン出典: Material Symbols (Apache License 2.0)

@@ -10,19 +10,19 @@ Everything except badges is rendered locally, with no external CDN or API call, 
 
 ## Features
 
-**Callout banners**
+**Callout banners**  
 Four banner styles — `tip`, `note`, `warning`, and `danger` — each with its own color and icon, for making notes and warnings stand out. The title is optional, and the body is rendered as Textile / Markdown, so emphasis, links, and lists all work inside a banner.
 
-**Step lists**
+**Step lists**  
 Turn an ordinary numbered list into a clean procedure view, with circled step numbers connected by a vertical line. Handy for installation steps and operational runbooks where the order matters.
 
-**Tabs**
+**Tabs**  
 Show several pieces of content as switchable tabs — for example per-OS commands or Markdown/Textile variants of the same thing. Tabs are operable by mouse and by keyboard (arrow keys, Home, End, Enter, Space), with proper ARIA roles for accessibility.
 
-**Checkbox notation**
+**Checkbox notation**  
 Write `[ ]` and `[x]` in the body and they are automatically rendered as checkbox icons (☐ / ☑). It follows the live preview as you type, and notation inside code blocks is left untouched so code examples stay intact. Textile sometimes turns `[X]` into a link; when that happens, the plugin quietly rescues it and shows a checked box instead.
 
-**Tech-stack badges**
+**Tech-stack badges**  
 Drop a badge with `{{badge(docker)}}` and get a shields.io-style badge with the right brand color and logo. Around 90 keys are built in (operating systems, languages, databases, container/CI tooling, and more), and you can attach a version with `{{badge(redmine, 6.1+)}}`. Colors and labels can be tweaked, and new badges added, from the plugin settings screen — no code change required. Badges use shields.io by default, but can be pointed at a self-hosted shields instance for closed networks.
 
 ## Tested environment
@@ -157,7 +157,7 @@ Notation inside code blocks (`<pre>` / `<code>`) is left untouched, so `[ ]` wri
 
 ### Badges
 
-Display a tech-stack badge inline. The first argument is a key; an optional second argument is a version, and an optional third argument overrides the color.
+Display a tech-stack badge inline. The first argument is a key; an optional second argument is a version, and an optional third argument sets the color.
 
 ```
 {{badge(linux)}}
@@ -166,20 +166,12 @@ Display a tech-stack badge inline. The first argument is a key; an optional seco
 {{badge(redmine, 6.1+, B32024)}}
 ```
 
-A trailing `+` on the version is converted to `.*` (`6.1+` becomes `6.1.*`). Keys are case-insensitive, and several aliases are provided (`k8s` → Kubernetes, `golang` → Go, and so on). The optional third argument sets the badge color as a hex value (a leading `#` is fine); to set a color without a version, leave the second argument empty (`{{badge(redmine, , B32024)}}`).
+A trailing `+` on the version is converted to `.*` (`6.1+` becomes `6.1.*`). Keys are case-insensitive.
+To set a color without a version, leave the second argument empty (`{{badge(redmine, , B32024)}}`).
 
-A key that isn't built in still renders: the key itself becomes the label, no logo is shown, and a color is picked automatically from the key name (the same key always gets the same color). The third argument can override that color as usual.
+If you specify a name that isn't registered, a badge with that name is drawn without an icon.
 
-The second argument also accepts HTML numeric/hex character references (`&#x2605;` → ★, `&#9733;` → ★). Combined with an undefined key, this lets you build things like a star-rating badge:
-
-```
-{{badge(rate, ★★★☆☆, 4C9A2A)}}
-{{badge(rate, &#x2605;&#x2605;&#x2605;&#x2606;&#x2606;, 4C9A2A)}}
-```
-
-Around 90 keys are built in, covering operating systems and distributions, languages, databases, container / CI / IaC tooling, secrets and observability tools, Google Workspace, and a few generic icons (`settings`, `maintenance`, `bug`, `network`). The full, current list of keys — along with their colors and a live preview — is shown on the settings screen.
-
-**Customizing**
+#### Customizing
 Open **Administration > Plugins > Redmine Starside > Settings** to:
 
 - change the color of any built-in badge,
@@ -188,8 +180,8 @@ Open **Administration > Plugins > Redmine Starside > Settings** to:
 
 Only your changes are stored, so plugin updates that improve the default colors still reach any badge you haven't customized.
 
-**Closed networks**
-By default, badges use `https://img.shields.io` on the internet. In a closed environment, self-host [shields](https://github.com/badges/shields) and enter your own instance's URL in the "Badge base URL" field on the settings screen. No traffic to shields.io will occur after that.
+#### Closed networks
+By default, badges use `https://img.shields.io` on the internet. In a closed environment, self-host shields and enter your own instance's URL in the "Badge base URL" field on the settings screen. No traffic to shields.io will occur after that.
 
 > Unlike the other macros, `badge` produces an `<img>` pointing at a badge image host. "Badge base URL" accepts an absolute URL (`https://shields.example.com`) or, behind a reverse proxy, a root-relative path (`/shields`) that resolves against the same origin as the page.
 

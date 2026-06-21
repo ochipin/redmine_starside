@@ -4,7 +4,7 @@ Redmine::Plugin.register :redmine_starside do
   name        'Redmine Starside'
   author      'Suguru Ochiai'
   description 'Adds Starlight-style banners, step lists, tabs, checkbox notation, and tech-stack badges to Redmine wikis and issues via wiki macros.'
-  version     '0.2.0'
+  version     '0.2.1'
   requires_redmine version_or_higher: '6.0.0'
 
   # バッジ設定（差分のみ保存。詳細は lib/redmine_starside/badge.rb 参照）
