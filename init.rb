@@ -80,7 +80,18 @@ Redmine::WikiFormatting::Macros.register do
 
   desc 'ステップリストを表示する'
   macro :step do |obj, args, text|
-    body = textilizable(text.strip, :object => obj)
+    container   = obj.is_a?(Journal) ? obj.journalized : obj
+    attachments = container.respond_to?(:attachments) ? container.attachments.to_a : []
+    if (controller_path == 'previews' || action_name == 'preview') && @attachments.present?
+      attachments = (attachments + @attachments).compact
+    end
+
+    body = textilizable(
+      text.strip,
+      :object             => obj,
+      :attachments        => attachments,
+      :inline_attachments => Redmine::WikiFormatting::Macros.inline_attachments
+    )
     body = body.gsub('<ol>', '<ol class="step-list">').gsub('<li>', '<li class="step-list__item">')
     body.html_safe
   end
